@@ -4,18 +4,53 @@ import contextlib
 import http.server
 import json
 import sqlite3
+import user_handlers
 
 
 class Handler(http.server.BaseHTTPRequestHandler):
     def do_POST(self):
         if self.path == "/check":
             self.handle_check()
+        elif self.path == "/login":
+            self.handle_login()
+        elif self.path == "/createUser":
+            content_length = int(self.headers['Content-Length'])  # <--- Gets the size of data
+            post_data = self.rfile.read(content_length)  # <--- Gets the data itself
+            print("POST request,\nPath: %s\nHeaders:\n%s\n\nBody:\n%s\n"
+                         %(str(self.path), str(self.headers), post_data.decode('utf-8')))
+            self.handle_create_user(post_data)
+        elif self.path == "/sendMessage":
+            self.handle_send_message()
+
+    def do_GET(self):
+        if self.path == "/getMessages":
+            self.handle_get_messages()
     
     def handle_check(self):
         if self.query_health() != 1:
             raise Exception('unexpected query result')
         self.wfile.write(json.dumps({"health": "ok"}).encode('UTF-8'))
         self.send_response(200)
+
+    def handle_login(self, postdata):
+        #TODO
+        pass
+
+    def handle_send_message(self, postdata):
+        pass
+
+    def handle_create_user(self, postdata):
+        request = json.loads(postdata)
+        print("request is: ", request)
+        #TODO: assert request is well forumalated. maybe should have a json schema
+        user_id = user_handlers.create_user(self.server.conn, request["username"], request["password"])
+        if user_id is not None:
+            self.wfile.write(json.dumps({"id": user_id }).encode('UTF-8'))
+            self.send_response(200)
+
+    def handle_get_message(self, request):
+        #TODO
+        pass
 
     def query_health(self):
         with contextlib.closing(self.server.conn.cursor()) as cur:

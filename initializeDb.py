@@ -13,7 +13,7 @@ def create_db(name):
         password text)''')
 
     c.execute('''CREATE TABLE sessions
-        (user_id integer PRIMARY KEY
+        (user_id integer PRIMARY KEY,
          token   text    UNIQUE)''')
 
     c.execute('''CREATE TABLE messages

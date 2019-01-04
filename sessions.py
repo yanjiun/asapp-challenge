@@ -6,7 +6,8 @@ import string
 
 
 def generate_token():
-    token = ''.join([random.choice(string.ascii_letters + string.digits) for n in range(32)])
+    token = ''.join(
+        [random.choice(string.ascii_letters + string.digits) for n in range(32)])
     return token
 
 
@@ -26,6 +27,7 @@ def update_user_token(conn, user_id, token):
         conn.commit()
         # TODO: verify success
 
+
 def authenticate(conn, user_id, token):
     # checks db to authenticate user tokens
     # return False if not authenticated
@@ -42,7 +44,8 @@ def authenticate(conn, user_id, token):
 def login_check(conn, username, password):
     with contextlib.closing(conn.cursor()) as cur:
         params = (username, password)
-        cur.execute('SELECT user_id from users where username=? and password=?', params)
+        cur.execute(
+            'SELECT user_id from users where username=? and password=?', params)
         rows = cur.fetchall()
         if len(rows) <= 0:
             return (False, -1)

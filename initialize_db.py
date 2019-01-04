@@ -3,6 +3,7 @@
 import sqlite3
 import sys
 
+
 def create_db(name):
     conn = sqlite3.connect(name)
     c = conn.cursor()
@@ -24,10 +25,10 @@ def create_db(name):
         timestamp text, 
         FOREIGN KEY (sender_id) REFERENCES users(user_id))''')
 
-
     conn.commit()
 
     conn.close()
+
 
 if __name__ == "__main__":
     create_db(sys.argv[1])

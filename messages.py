@@ -2,6 +2,7 @@ import contextlib
 import json
 import datetime
 
+
 def record_message(conn, sender, receiver, content):
     json_blob = translate_message_into_blob(content)
     message_id = get_message_id(conn)
@@ -13,6 +14,7 @@ def record_message(conn, sender, receiver, content):
         conn.commit()
 
     return message_id, timestamp
+
 
 def get_messages(conn, receiver, min_id, limit):
     messages = []
@@ -33,6 +35,7 @@ def get_messages(conn, receiver, min_id, limit):
 
     return messages
 
+
 def get_message_id(conn):
     with contextlib.closing(conn.cursor()) as cur:
         cur.execute('''SELECT MAX(message_id) FROM messages ''')
@@ -42,6 +45,7 @@ def get_message_id(conn):
         else:
             return 0
 
+
 def translate_message_into_blob(content):
     content_generators = {
         "text": encode_text_blob,
@@ -49,6 +53,7 @@ def translate_message_into_blob(content):
         "video": encode_video_blob
     }
     return content_generators[content["type"]](content)
+
 
 def encode_text_blob(content):
     content_obj = {
@@ -59,6 +64,7 @@ def encode_text_blob(content):
     }
     json_blob = json.dumps(content_obj)
     return json_blob
+
 
 def encode_image_blob(content):
     content_obj = {
@@ -72,6 +78,7 @@ def encode_image_blob(content):
     json_blob = json.dumps(content_obj)
     return json_blob
 
+
 def encode_video_blob(content):
     content_obj = {
         "type": "video",
@@ -82,6 +89,7 @@ def encode_video_blob(content):
     }
     json_blob = json.dumps(content_obj)
     return json_blob
+
 
 def decode_message(content_string):
     content_stored = json.loads(content_string)

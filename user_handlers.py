@@ -1,7 +1,9 @@
 import contextlib
 
+
 class UserAlreadyExists(Exception):
     pass
+
 
 def get_next_user_id(conn):
     max_id = 0
@@ -11,8 +13,9 @@ def get_next_user_id(conn):
         if row[0] is not None:
             max_id = row[0] + 1
 
-    print("returning user id: %s" %max_id)
+    print("returning user id: %s" % max_id)
     return max_id
+
 
 def create_user(conn, username, password):
     if not login_existence(conn, username):
@@ -23,7 +26,7 @@ def create_user(conn, username, password):
             conn.commit()
             return user_id
     else:
-        print("login for username %s already exists" %username)
+        print("login for username %s already exists" % username)
         raise UserAlreadyExists()
 
 

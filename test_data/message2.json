@@ -1,0 +1,10 @@
+{
+   "sender": 0,
+   "receiver": 1,
+   "content": {
+      "type": "image",
+      "url": "test.test",
+      "height": 20,
+      "width": 20
+   }
+}

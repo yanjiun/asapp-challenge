@@ -19,15 +19,11 @@ def create_db(name):
     c.execute('''CREATE TABLE messages
         (message_id integer, 
         sender_id integer, 
-        receiver_id integer, 
-        type text, 
+        receiver_id integer,
+        metadata blob,
+        timestamp text, 
         FOREIGN KEY (sender_id) REFERENCES users(user_id))''')
 
-    c.execute('''CREATE TABLE message_content
-        (message_id integer PRIMARY KEY, 
-        type text, 
-        metadata blob, 
-        FOREIGN KEY (message_id) REFERENCES messages(message_id))''')
 
     conn.commit()
 

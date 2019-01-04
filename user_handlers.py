@@ -1,5 +1,8 @@
 import contextlib
 
+class UserAlreadyExists(Exception):
+    pass
+
 def get_next_user_id(conn):
     max_id = 0
     with contextlib.closing(conn.cursor()) as cur:
@@ -21,7 +24,7 @@ def create_user(conn, username, password):
             return user_id
     else:
         print("login for username %s already exists" %username)
-        # TODO return error here
+        raise UserAlreadyExists()
 
 
 def login_existence(conn, username):

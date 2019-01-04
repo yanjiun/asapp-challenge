@@ -1,0 +1,8 @@
+{
+   "sender": 0,
+   "receiver": 1,
+   "content": {
+      "type": "text",
+      "text": "hello world"
+   }
+}

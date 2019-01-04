@@ -1,3 +1,0 @@
-curl -s -d '{"sender": 0}' -XPOST http://localhost:8080/sendMessage
---header "Content-Type: application/json"
---header "Authorization: Bearer 2zwcwqPWqVVRHVp8wkNwuEu2OIbVX88T"

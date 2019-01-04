@@ -1,0 +1,9 @@
+{
+   "sender": 0,
+   "receiver": 1,
+   "content": {
+      "type": "video",
+      "url": "test.test",
+      "source": "youtube"
+   }
+}

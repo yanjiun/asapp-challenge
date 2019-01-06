@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import contextlib
+import sys
 import http.server
 import json
 import sqlite3
@@ -122,4 +123,7 @@ def main(dbName="challenge.db"):
 
 
 if __name__ == '__main__':
-    main()
+    if len(sys.argv) > 1:
+        main(sys.argv[1])
+    else:
+        main()

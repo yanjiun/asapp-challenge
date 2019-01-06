@@ -5,8 +5,7 @@ then to start server
 
 ## To test
 
-1. start server `python3 src/challenge.py`
-2. run system test script `python test/test_system.py`
+run system test script `test_system.sh`
 
 Can also send requests with curl using the test_data json files and sample commands
 in the shell script

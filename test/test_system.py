@@ -48,11 +48,11 @@ def login_user_2():
     # login user2 get token2
     print("logging user 2 in")
 
-def send_messages():
+def send_messages(token):
     # send messages from user1 to user2
     print("sending 3 messages from user 1 to user 2")
 
-def get_messages():
+def get_messages(token):
     # retrieve messages
     print("retrieving all messages for user 2")
 

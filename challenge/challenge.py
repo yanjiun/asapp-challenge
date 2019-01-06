@@ -39,17 +39,19 @@ class Handler(http.server.BaseHTTPRequestHandler):
     def handle_check(self):
         if self.query_health() != 1:
             raise Exception('unexpected query result')
-        self.wfile.write(json.dumps({"health": "ok"}).encode('UTF-8'))
         self.send_response(200)
+        self.end_headers()
+        self.wfile.write(json.dumps({"health": "ok"}).encode('UTF-8'))
 
     def handle_login(self, postdata):
         request = json.loads(postdata)
         if (user_handlers.login_existence(self.server.conn, request["username"])):
             user_id, token = sessions.login_user(
                 self.server.conn, request["username"], request["password"])
+            self.send_response(200)
+            self.end_headers()
             self.wfile.write(json.dumps(
                 {"id": user_id, "token": token}).encode('UTF-8'))
-            self.send_response(200)
 
     def handle_send_message(self, postdata):
         request = json.loads(postdata)
@@ -61,8 +63,9 @@ class Handler(http.server.BaseHTTPRequestHandler):
                 messages.record_message(
                     self.server.conn, request["sender"], request["receiver"], request["content"])
             response = {"id": message_id, "timestamp": timestamp}
-            self.wfile.write(json.dumps(response).encode('UTF-8'))
             self.send_response(200)
+            self.end_headers()
+            self.wfile.write(json.dumps(response).encode('UTF-8'))
         else:
             self.wfile.write(json.dumps(
                 {"error": "Authentication Error"}).encode('UTF-8'))
@@ -74,16 +77,14 @@ class Handler(http.server.BaseHTTPRequestHandler):
         try:
             user_id = user_handlers.create_user(
                 self.server.conn, request["username"], request["password"])
-            self.wfile.write(json.dumps({"id": user_id}).encode('UTF-8'))
             self.send_response(200)
+            self.end_headers()
+            self.wfile.write(json.dumps({"id": user_id}).encode('UTF-8'))
         except user_handlers.UserAlreadyExists:
-            self.wfile.write(json.dumps(
-                {"error": "username already exists"}).encode('UTF-8'))
-            self.send_response(501)
-        except:
-            self.wfile.write(json.dumps(
-                {"error": "unknown error"}).encode('UTF-8'))
-            self.send_response(500)
+            self.send_error(501, "username already exists")
+        except Exception as e:
+            print("encountered error {}".format(e))
+            self.send_error(500, "unknown error")
 
     def handle_get_messages(self, postdata):
         request = json.loads(postdata)
@@ -94,12 +95,11 @@ class Handler(http.server.BaseHTTPRequestHandler):
             limit = 100 if not "limit" in request else request["limit"]
             msg_list = messages.get_messages(
                 self.server.conn, request["recipient"], request["start"], limit)
-            self.wfile.write(json.dumps(msg_list).encode('UTF-8'))
             self.send_response(200)
+            self.end_headers()
+            self.wfile.write(json.dumps(msg_list).encode('UTF-8'))
         else:
-            self.wfile.write(json.dumps(
-                {"error": "Authentication Error"}).encode('UTF-8'))
-            self.send_response(401)
+            self.send_error(401, "authentication error")
 
     def query_health(self):
         with contextlib.closing(self.server.conn.cursor()) as cur:
@@ -114,8 +114,8 @@ class Server(http.server.HTTPServer):
         self.conn = conn
 
 
-def main():
-    conn = sqlite3.connect('challenge.db')
+def main(dbName="challenge.db"):
+    conn = sqlite3.connect(dbName)
     address = ('localhost', 8080)
     httpd = Server(address, conn)
     httpd.serve_forever()
